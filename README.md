@@ -15,11 +15,11 @@ main/
   README.md
   
   base-editor-amplicon-ngs/
-    pipeline_script.sh
-    submit_pipeline_array.sh
-    sample_sheet.csv
-    processed_crispresso_batchfile.txt
-    Batch_Analysis_BE.py
+    - pipeline_script.sh
+    - submit_pipeline_array.sh
+    - sample_sheet.csv
+    - processed_crispresso_batchfile.txt
+    - Batch_Analysis_BE.py
   
   prime-editor-amplicon-ngs/
     copy_and_rename_fastq.sh
