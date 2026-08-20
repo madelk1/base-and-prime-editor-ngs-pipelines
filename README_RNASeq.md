@@ -4,7 +4,8 @@ Comprehensive transcriptome-wide off-target analysis of adenine base editors.
 
 ## Overview
 
-This repository contains the complete GATK4-based pipeline for detecting and characterizing off-target base editing events in RNA-seq data. The analysis identifies high-confidence off-target sites using stringent multi-stage filtering and replicate-based thresholds to distinguish genuine editing events from technical noise.
+This repository contains the complete GATK4-based pipeline for detecting and characterizing off-target base editing events in RNA-seq data. The analysis identifies high-confidence off-target sites using stringent multi-stage filtering and replicate-based thresholds to distinguish genuine editing events from technical noise. It has been adapted from Aryee/Joung lab pipeline: https://github.com/aryeelab/RNAseq_BE_editing to work with GATK4. I have also included additional scripts for high-confidence off-target sites and comparing between datasets (i.e. different variants or delivery formats)
+
 
 ## Pipeline Architecture
 
@@ -86,59 +87,6 @@ abe-rnaseq/
 - GENCODE v44 GTF for genomic feature assignment
 - Classification: protein-coding exon, non-coding exon, intronic, intergenic
 
-## Results Summary
-
-### RNP vs mRNA (PCSK9 target, HUES64)
-
-| Stage | RNP | mRNA | Ratio |
-|-------|-----|------|-------|
-| Individual samples | 16,718 | 26,109 | 1.6× |
-| Pooled (2/3 reps) | 100 | 375 | 3.8× |
-| Combined 3/6 threshold | 34 | 34 | 1.0× |
-
-**Key insight:** Complete non-overlap (0%) indicates delivery method fundamentally determines off-target profile.
-
-### Architectural Comparison (HiFiRNASeq, HEK293T)
-
-| Architecture | High-Confidence Sites | vs ABE8e | Mean Editing |
-|---|---|---|---|
-| ABE8e | 2,522 | — | 20.6% |
-| HiFi-ABE | 263 | 9.6× improvement | 17.9% |
-| Inlaid-ABE | 461 | 5.5× improvement | 18.6% |
-
-## Usage
-
-### Run Full Pipeline on HPC
-
-```bash
-# 1. Prepare STAR index
-sbatch star_index.slurm
-
-# 2. Align fastqs and preprocess BAMs
-sbatch GATK4-fastq-ARbam-hg38.slurm
-
-# 3. Quantify coverage
-sbatch bam-readcount-CL.slurm
-
-# 4. Variant calling
-sbatch haplotypecaller-gatk4.slurm
-
-# 5. Merge VCF + readcounts
-sbatch step2-gatk4.slurm
-
-# 6. Filter variants
-sbatch step3-gatk4.slurm
-
-# 7. Multi-threshold analysis
-Rscript combined_analysis_2of6_3of6_4of6.R
-
-# 8. Overlap comparison
-Rscript compare_conditions_overlap.R
-
-# 9. Annotation
-Rscript annotate_offtargets.R
-```
-
 ### Key Output Files
 
 - `*all_snvs.stringent.txt` - Per-sample high-confidence variants
@@ -163,25 +111,3 @@ tidyverse, readr, dplyr, ggplot2, GenomicRanges, rtracklayer
 - STAR index (GRCh38)
 - dbSNP v138 VCF
 
-## Authors
-
-Madeleine K. Lapinaite, Alapati Lab, Arizona State University
-
-## Citation
-
-If you use this pipeline, please cite:
-- GATK Best Practices for RNA-seq: https://github.com/broadinstitute/gatk
-- Aryee/Joung lab pipeline: https://github.com/aryeelab/RNAseq_BE_editing
-
-## License
-
-MIT
-
-## Contact
-
-For questions or issues, please open an issue on this repository.
-
----
-
-**Last updated:** August 2026
-**Pipeline version:** GATK4 v4.6.2.0
