@@ -1,4 +1,4 @@
-# RNA-Seq Off-Target Analysis: ABE8e Base Editors
+# RNA-Seq Off-Target Analysis: Base Editors
 
 Comprehensive transcriptome-wide off-target analysis of adenine base editors.
 
@@ -57,6 +57,164 @@ abe-rnaseq/
 - gatk4_3stage_pooled_2of3.R
 - combined_analysis_2of6_3of6_4of6.R
 - annotate_offtargets.R
+## Setup & Reference Files
+
+### Step 0: STAR Index Generation
+
+Build the STAR index before alignment:
+
+```bash
+sbatch star_index.slurm
+```
+
+**STAR Index Parameters:**
+```bash
+STAR --runThreadN ${SLURM_CPUS_PER_TASK} \
+  --runMode genomeGenerate \
+  --genomeDir "$IDX" \
+  --genomeFastaFiles "$FA" \
+  --sjdbGTFfile "$GTF" \
+  --sjdbOverhang 149
+```
+
+- `--sjdbOverhang 149`: Set to (read_length - 1); critical for junction detection
+- `--runThreadN`: Parallelize with available CPUs
+
+**Runtime:** ~4 hours; output: ~30 GB
+
+---
+
+### Reference Files Verification
+
+**Before running the pipeline, verify all reference files exist and are complete:**
+
+```bash
+#!/bin/bash
+# Reference Files Verification Script
+# Run before starting alignment — confirms all reference files exist and look correct
+
+REF_DIR="/pub/madelk1/rnaseq/refs/hg38"
+
+echo "=========================================="
+echo "HG38 Reference Files Verification"
+echo "=========================================="
+
+# 1. Reference FASTA
+echo ""
+echo "1. Reference FASTA:"
+ls -lh ${REF_DIR}/GRCh38.primary_assembly.genome.fa 2>/dev/null || echo "❌ MISSING"
+grep -c "^>" ${REF_DIR}/GRCh38.primary_assembly.genome.fa 2>/dev/null && echo "✓ Sequences found" || echo "❌ MISSING"
+
+# 2. FASTA Index (.fai)
+echo ""
+echo "2. FASTA Index (.fai):"
+ls -lh ${REF_DIR}/GRCh38.primary_assembly.genome.fa.fai 2>/dev/null || echo "❌ MISSING"
+
+# 3. Sequence Dictionary (.dict)
+echo ""
+echo "3. Sequence Dictionary (.dict):"
+ls -lh ${REF_DIR}/GRCh38.primary_assembly.genome.dict 2>/dev/null || echo "❌ MISSING"
+
+# 4. GTF Annotation
+echo ""
+echo "4. GTF Annotation:"
+ls -lh ${REF_DIR}/gencode.v44.annotation.gtf 2>/dev/null || echo "❌ MISSING"
+echo " Genes: $(grep -c '$\tgene\t' ${REF_DIR}/gencode.v44.annotation.gtf 2>/dev/null || echo '0')"
+echo " Transcripts: $(grep -c '$\ttranscript\t' ${REF_DIR}/gencode.v44.annotation.gtf 2>/dev/null || echo '0')"
+
+# 5. STAR Index
+echo ""
+echo "5. STAR Index:"
+ls -d ${REF_DIR}/star_index 2>/dev/null || echo "❌ MISSING"
+ls ${REF_DIR}/star_index/Genome ${REF_DIR}/star_index/SA ${REF_DIR}/star_index/SAindex 2>/dev/null >/dev/null && echo "✓ Key files present" || echo "❌ Incomplete"
+
+# 6. dbSNP
+echo ""
+echo "6. dbSNP:"
+ls -lh ${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf 2>/dev/null || echo "❌ MISSING"
+ls -lh ${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf.idx 2>/dev/null || echo "❌ Index MISSING"
+
+# 7. Chromosome Naming Check (must match across all 3)
+echo ""
+echo "7. Chromosome Naming Check (must match across all 3):"
+echo -n " Reference: "
+grep "^>" ${REF_DIR}/GRCh38.primary_assembly.genome.fa | head -1 | cut -d' ' -f1
+echo -n " GTF: "
+grep -v "^#" ${REF_DIR}/gencode.v44.annotation.gtf | head -1 | cut -f1
+echo -n " STAR: "
+head -1 ${REF_DIR}/star_index/chrName.txt
+
+echo ""
+echo "=========================================="
+echo "Verification Complete"
+echo "=========================================="
+```
+
+---
+
+## SLURM Resource Allocation
+
+### Recommended Settings (HPC)
+
+```bash
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=your-email@asu.edu
+#SBATCH -A alapinai_lab           # Allocation/account
+#SBATCH -J job-name               # Job name
+#SBATCH -p standard               # Partition
+#SBATCH -t 04:00:00               # Time limit
+#SBATCH --cpus-per-task=16        # CPUs per task
+#SBATCH --mem=64G                 # Memory
+#SBATCH -o logs/job-%j.out        # Output log
+#SBATCH -e logs/job-%j.err        # Error log
+```
+
+### Per-Step Resource Requirements
+
+| Step | CPU | Memory | Time | Notes |
+|------|-----|--------|------|-------|
+| STAR index | 16 | 64 GB | 4 hr | One-time; reusable across projects |
+| STAR alignment | 16 | 64 GB | 35 min/sample | Scales with sample count |
+| SplitNCigarReads | 4 | 32 GB | 2 hr/sample | Memory-intensive; can't parallelize |
+| BQSR (Pass 1) | 8 | 32 GB | 90 min/sample | Can run in parallel |
+| BQSR (Pass 2, QC) | 8 | 32 GB | 30 min/sample | Light; quick validation |
+
+---
+
+## Expected Inputs & Outputs
+
+### Before Running
+
+- ✓ Paired-end FASTQs at `/pub/madelk1/rnaseq/fastqs/...`
+- ✓ STAR index already built
+- ✓ Reference files verified (see verification script above)
+- ✓ All paths in script match your system
+
+### Expected Outputs
+
+**Alignment Step:**
+- `aligned/${sample}Aligned.sortedByCoord.out.bam` — raw STAR alignment
+
+**GATK4 Preprocessing:**
+- `forVariantCalling/${sample}.bam` — final analysis-ready BAM
+- `metrics/${sample}.rmdup.log`, `.recal_data.table`, `.post_recal_data.table` — QC metrics
+
+**Variant Calling:**
+- `variantCalls/${sample}.vcf.gz` — called variants
+
+---
+
+## Critical Fixes Applied: GATK3 → GATK4
+
+| Issue | GATK3 Original | GATK4 Version | Impact |
+|-------|---|---|---|
+| STAR MAPQ | (not present) | `--outSAMmapqUnique 60` | Moved to alignment stage; removes post-processing |
+| RGSM bug | `-RGSM 1` (hardcoded) | `-RGSM ${sample}` | **🔴 Critical:** Fixes VCF multi-sample headers |
+| BQSR Pass 2 input | Attempted `-bqsr-recal-file` on temp BAM | Runs on recalibrated BAM from ApplyBQSR | **🔴 Critical:** Validation now works correctly |
+| ApplyBQSR syntax | `PrintReads -BQSR` | `ApplyBQSR --bqsr-recal-file` | Tool renamed; parameter structure changed |
+| SplitNCigarReads flags | `-rf ReassignOneMappingQuality -U ALLOW_N_CIGAR_READS` | (removed) | GATK4 handles N-cigars natively |
+
+---
 
 ## Methods & Technical Details
 
