@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=CRISPRessoRawDataPaperAnalysisPEBatch15Array
+#SBATCH --job-name=CRISPRessoRawDataPEArray
 #SBATCH --output=logs/crispresso_pe_%A_%a.out
 #SBATCH --error=logs/crispresso_pe_%A_%a.err
 #SBATCH --time=24:00:00
@@ -18,7 +18,7 @@ module load mamba/latest
 source activate ampseq_pipeline
 
 # TSV file (must be in same directory you submit from)
-TSV="rawlargebatch15_crispresso_batchfile.tsv"
+TSV="rawdata_crispresso_batchfile.tsv"
 
 # Extract this task's sample ID
 ROW=$(awk -F'\t' -v id="${SLURM_ARRAY_TASK_ID}" '$2 == id"_R1.fastq.gz"' "$TSV")
@@ -91,6 +91,6 @@ CRISPResso \
   --assign_ambiguous_alignments_to_first_reference \
   --prime_editing_override_prime_edited_ref_seq "$PE_OVERRIDE_SEQ" \
   "${NICKING_FLAG[@]}" \
-  --output_folder "CRISPRessoBatch15PaperAnalysis_PEsamples"
+  --output_folder "CRISPRessoRawData_PEsamples"
 
 echo "✅ Finished $NAME"
