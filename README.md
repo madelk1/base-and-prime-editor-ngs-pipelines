@@ -11,18 +11,20 @@ Base editor transcriptome-wide off-target effect characterization via total rRNA
 
 ## Repository Structure
 main/
-  ├── copy_and_rename_fastq.sh
-  ├── README.md
-  ├── base-editor-amplicon-ngs/
-  │   ├── pipeline_script.sh
-  │   ├── submit_pipeline_array.sh
-  │   ├── sample_sheet.csv
-  │   ├── processed_crispresso_batchfile.txt
-  │   └── Batch_Analysis_BE.py
-  └── prime-editor-amplicon-ngs/
-      ├── copy_and_rename_fastq.sh
-      ├── submit_pe_crispresso_array.sh
-      └── Batch_Analysis_PE.py
+  copy_and_rename_fastq.sh
+  README.md
+  
+  base-editor-amplicon-ngs/
+    pipeline_script.sh
+    submit_pipeline_array.sh
+    sample_sheet.csv
+    processed_crispresso_batchfile.txt
+    Batch_Analysis_BE.py
+  
+  prime-editor-amplicon-ngs/
+    copy_and_rename_fastq.sh
+    submit_pe_crispresso_array.sh
+    Batch_Analysis_PE.py
       
 ## Key Differences: Base Editors vs. Prime Editors Amplicon NGS Data
 
