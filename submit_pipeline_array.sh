@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=array_pipeline_batch15
+#SBATCH --job-name=array_pipeline
 #SBATCH --output=logs/pipeline_%A_%a.out
 #SBATCH --error=logs/pipeline_%A_%a.err
 #SBATCH --time=24:00:00
@@ -18,4 +18,4 @@ mkdir -p logs
 module load mamba/latest
 
 # Pass the array task ID as a single-sample range (e.g. "5-5") to the original pipeline script
-bash batch_15_pipeline_script.sh "${SLURM_ARRAY_TASK_ID}-${SLURM_ARRAY_TASK_ID}"
+bash pipeline_script.sh "${SLURM_ARRAY_TASK_ID}-${SLURM_ARRAY_TASK_ID}"
