@@ -192,7 +192,6 @@ High-confidence sites identified across biological replicates using minimum-samp
 ```r
 tidyverse, readr, dplyr, ggplot2, GenomicRanges, rtracklayer
 ```
-]
 
 ## References
 
