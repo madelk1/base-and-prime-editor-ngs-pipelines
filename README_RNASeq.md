@@ -120,21 +120,6 @@ Adds GATK-required `@RG` tags for downstream processing:
 - Generates post-recalibration QC report for validation
 - Recommended for benchmarking BQSR effectiveness
 
-### Pipeline Performance
-
-| Metric | Value |
-|--------|-------|
-| Runtime per sample | ~6 hours |
-| - STAR alignment | 35 min |
-| - SplitNCigarReads | 2 hours |
-| - BQSR steps | 3+ hours |
-| Output BAM size | 16 GB per sample |
-| Read pairs per sample | 44-70 million |
-| Alignment rate | 85-95% |
-| Duplication rate | 10.5-12.6% |
-
----
-
 ## Variant Calling & Filtering Strategy
 
 ### HaplotypeCaller Configuration
