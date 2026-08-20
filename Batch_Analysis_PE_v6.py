@@ -31,10 +31,6 @@ SUMMARY_OUTPUT   = "Batch15updated_analysis_summary.csv"
 PRISM_OUTPUT     = "Batch15updated_outcomes_for_prism.csv"
 import datetime
 _ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-FIDELITY_OUTPUT  = f"RTT_fidelity_analysis_{_ts}.csv"
-
-# 3. NOT USED CURRENTLY (was leftover from previous script to analyze fidelity) RTT SEQUENCE (DNA 5'->3' as in pegRNA; RC will be searched in amplicon)
-RTT_SEQ = "GGAAAAGCGATCAAGGT"
 
 print("=" * 80)
 print("CONFIGURATION — PRIME EDITING ANALYSIS (CRISPResso2 native PE output)")
@@ -297,11 +293,5 @@ print(f"✓ {SUMMARY_OUTPUT}  — full metrics table (all samples × all columns
 print(f"✓ {PRISM_OUTPUT}     — Prism-ready pivot (outcomes × samples, % aligned reads)")
 print(f"\nSaved in: {os.getcwd()}")
 print("=" * 80)
-
-
-# ============================================================================
-# CELL 7: RTT FIDELITY ANALYSIS — skipped for this batch (per-sample RTT seqs)
-# ============================================================================
-
 
 print("\n✓ Analysis complete.")
