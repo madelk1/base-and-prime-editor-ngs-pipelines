@@ -78,6 +78,3 @@ Python analysis scripts produce:
 ## Author
 Madeleine King
 Arizona State University, 2026  
-
-## Questions?
-See Appendix D of the dissertation for detailed methodology.
