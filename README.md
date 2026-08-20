@@ -7,7 +7,6 @@ Code for analyzing next-generation sequencing data from CRISPR base editor and p
 This repository contains analysis pipelines for processing and analyzing NGS data from:
 - Base editor on-target and off-target characterization via Amplicon NGS data.
 - Prime editor on-target and byproduct characterization via Amplicon NGS data.
-- Base editor transcriptome-wide off-target effect characterization via total rRNA-depleted RNA-Seq data.
 
 ## Repository Structure
 main/
