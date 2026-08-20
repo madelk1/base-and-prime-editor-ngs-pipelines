@@ -21,7 +21,7 @@ module load mamba/latest
 source activate ampseq_pipeline
 
 # File paths
-CSV="batch15sample_sheet.csv"
+CSV="sample_sheet.csv"
 FASTAS_DIR="amplicon_fastas"
 OUTPUT_FASTQ_DIR="dedup_fastq"
 
