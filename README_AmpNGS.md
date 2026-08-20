@@ -110,6 +110,7 @@ umi_tools extract \
 - `--stdout` - Write processed R1 to file
 
 **Output:** UMI moved into read header (appended as `_NNNNNNNNN`) for deduplication tracking
+
 ---
 
 ### Stage 2: Adapter Trimming (`fastp`)
