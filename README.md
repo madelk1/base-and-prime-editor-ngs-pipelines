@@ -10,23 +10,21 @@ Prime editor on-target and byproduct characterization via Amplicon NGS data.
 Base editor transcriptome-wide off-target effect characterization via total rRNA-depleted RNA-Seq data.
 
 ## Repository Structure
-├── main
-│ ├── copy_and_rename_fastq.sh
+main/
+├── copy_and_rename_fastq.sh (shared utility)
+├── README.md
 │
 ├── base-editor-amplicon-ngs/
-│ ├── pipeline_script.sh
-│ ├── submit_pipeline_array.sh
-│ └── sample_sheet.csv
-│ ├── processed_crispresso_batchfile.txt
-│ ├── submit_crispresso_array.sh
-│ └── Batch_Analysis_BE.py
+│   ├── pipeline_script.sh
+│   ├── submit_pipeline_array.sh
+│   ├── sample_sheet.csv
+│   ├── processed_crispresso_batchfile.txt
+│   └── Batch_Analysis_BE.py
 │
-├── prime-editor-amplicon-ngs/
-│ ├── copy_and_rename_fastq.sh
-│ ├── submit_pe_crispresso_array.sh
-│ └── Batch_Analysis_PE.py
-│
-└── README.md
+└── prime-editor-amplicon-ngs/
+    ├── copy_and_rename_fastq.sh
+    ├── submit_pe_crispresso_array.sh
+    └── Batch_Analysis_PE.py
 
 ## Key Differences: Base Editors vs. Prime Editors Amplicon NGS Data
 
