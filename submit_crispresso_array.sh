@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=CRISPRessoBatch14Array
+#SBATCH --job-name=CRISPRessoArray
 #SBATCH --output=logs/crispresso_%A_%a.out
 #SBATCH --error=logs/crispresso_%A_%a.err
 #SBATCH --time=24:00:00
@@ -18,7 +18,7 @@ module load mamba/latest
 source activate ampseq_pipeline
 
 # TSV file (must be in the same directory you submit from)
-TSV="processedlargebatch15_crispresso_batchfile.tsv"
+TSV="processed_crispresso_batchfile.tsv"
 
 # Extract this task's sampleID (skip header, grab line matching task ID)
 ROW=$(awk -F'\t' -v id="${SLURM_ARRAY_TASK_ID}" '$2 == id"_R1.fastq.gz"' "$TSV")
@@ -46,6 +46,6 @@ CRISPResso \
   --exclude_bp_from_left 0 \
   --exclude_bp_from_right 0 \
   --base_editor_output \
-  --output_folder "CRISPRessoBatch15Array"
+  --output_folder "CRISPRessoArray"
 
 echo "✅ Finished $NAME"
