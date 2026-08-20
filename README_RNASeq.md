@@ -57,32 +57,8 @@ abe-rnaseq/
 - gatk4_3stage_pooled_2of3.R
 - combined_analysis_2of6_3of6_4of6.R
 - annotate_offtargets.R
+
 ## Setup & Reference Files
-
-### Step 0: STAR Index Generation
-
-Build the STAR index before alignment:
-
-```bash
-sbatch star_index.slurm
-```
-
-**STAR Index Parameters:**
-```bash
-STAR --runThreadN ${SLURM_CPUS_PER_TASK} \
-  --runMode genomeGenerate \
-  --genomeDir "$IDX" \
-  --genomeFastaFiles "$FA" \
-  --sjdbGTFfile "$GTF" \
-  --sjdbOverhang 149
-```
-
-- `--sjdbOverhang 149`: Set to (read_length - 1); critical for junction detection
-- `--runThreadN`: Parallelize with available CPUs
-
-**Runtime:** ~4 hours; output: ~30 GB
-
----
 
 ### Reference Files Verification
 
