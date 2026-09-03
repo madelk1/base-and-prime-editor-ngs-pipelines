@@ -298,6 +298,124 @@ High-confidence sites identified across biological replicates using minimum-samp
 
 ---
 
+---
+
+## Post-Processing R Scripts
+
+After per-site editing frequencies are calculated and filtered, two R scripts are used for downstream analysis and annotation.
+
+---
+
+## `Determining Overlapped Off-Target Sites`
+
+Identifies and visualizes overlap between off-target editing sites detected across different experimental conditions (e.g. delivery methods, editor variants, or treatment groups).
+
+### Input
+
+- Per-sample filtered site tables output from the bam-readcount/filtering pipeline (one file per condition)
+- Each file contains columns: `chromosome`, `position`, `strand`, `edit_type`, `editing_frequency`, `coverage`
+
+### What it does
+
+1. Loads filtered site tables for each condition
+2. Identifies sites present in each condition at the selected replicate threshold (default 3/6)
+3. Computes pairwise and multi-way overlaps between conditions
+4. Generates Venn diagram or UpSet plot of site overlap
+5. Outputs a merged table of all sites with per-condition editing frequencies for comparison
+
+### Configuration
+
+Edit the top of the script before running:
+
+```r
+# Paths to filtered site tables (one per condition)
+condition_files <- list(
+  "ConditionA" = "path/to/conditionA_sites.txt",
+  "ConditionB" = "path/to/conditionB_sites.txt"
+)
+
+# Replicate threshold used for filtering
+min_samples <- 3
+```
+
+### Output
+
+| File | Contents |
+|---|---|
+| `overlap_venn.pdf` | Venn diagram of site overlap across conditions |
+| `overlap_merged_table.csv` | All sites with editing frequency per condition — ready for Prism |
+| `shared_sites.csv` | Sites present in all conditions (highest-confidence off-targets) |
+
+### How to Run
+
+```r
+# From R or RStudio
+source("compare_conditions_overlap.R")
+
+# Or from command line
+Rscript compare_conditions_overlap.R
+```
+
+---
+
+## `Genomic Annotation of Off-Target Sites`
+
+Annotates filtered off-target editing sites with genomic context including gene name, transcript feature (exon/intron/UTR/intergenic), distance to nearest gene, and known SNP overlap.
+
+### Input
+
+- Filtered site table (e.g. `shared_sites.csv` from `compare_conditions_overlap.R` or directly from filtering pipeline)
+- Reference genome annotation (GTF/GFF3)
+- Optional: dbSNP VCF for known SNP filtering
+
+### What it does
+
+1. Loads filtered sites and converts to GRanges object
+2. Overlaps sites with genome annotation to assign feature class (CDS, UTR3, UTR5, intron, intergenic)
+3. Assigns nearest gene name and distance for intergenic sites
+4. Optionally flags sites overlapping known SNPs in dbSNP
+5. Classifies sites by predicted functional impact (coding, splice site, UTR, intronic, intergenic)
+6. Outputs annotated table sorted by editing frequency
+
+### Configuration
+
+Edit the top of the script before running:
+
+```r
+# Path to filtered sites table
+sites_file <- "shared_sites.csv"
+
+# Reference genome annotation (GTF format)
+gtf_file <- "path/to/genome.gtf"
+
+# Optional: dbSNP VCF (set to NULL to skip SNP filtering)
+dbsnp_vcf <- "path/to/dbsnp.vcf.gz"   # or NULL
+
+# Genome build
+genome_build <- "hg38"
+```
+
+### Output
+
+| File | Contents |
+|---|---|
+| `annotated_offtargets.csv` | Full annotated site table with gene, feature, and SNP overlap |
+| `offtarget_feature_summary.csv` | Count of sites per feature class (CDS, UTR, intron, intergenic) |
+| `offtarget_feature_pie.pdf` | Pie chart of feature class distribution |
+
+### How to Run
+
+```r
+# From R or RStudio
+source("annotate_offtargets.R")
+
+# Or from command line
+Rscript annotate_offtargets.R
+```
+
+---
+
+
 ## Known Issues & Corrections
 
 | Issue | Root Cause | Fix |
