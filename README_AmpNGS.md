@@ -285,7 +285,7 @@ rm -f "${IDX_PREFIX}".*.bt2
 | 6 | `samtools fastq` | Deduplicated BAM | Final FASTQ | Convert back to FASTQ format |
 | 7 | `rm` | Intermediates | — | Clean up temporary files |
 
-## `CRISPResso2 Base Editing`
+## CRISPResso2 Base Editing
 
 SLURM array job script for running CRISPResso2 in base editing mode across all samples in a batch.
 
@@ -370,7 +370,7 @@ grep -r "ERROR\|Traceback" logs/
 
 ---
 
-## `CRISPResso2 Prime Editing `
+## CRISPResso2 Prime Editing
 
 SLURM array job script for running CRISPResso2 in prime editing mode across all samples in a batch.
 
