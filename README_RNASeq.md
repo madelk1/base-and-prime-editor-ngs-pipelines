@@ -306,7 +306,7 @@ After per-site editing frequencies are calculated and filtered, two R scripts ar
 
 ---
 
-## `Determining Overlapped Off-Target Sites`
+## Determining Overlapped Off-Target Sites
 
 Identifies and visualizes overlap between off-target editing sites detected across different experimental conditions (e.g. delivery methods, editor variants, or treatment groups).
 
@@ -358,7 +358,7 @@ Rscript compare_conditions_overlap.R
 
 ---
 
-## `Genomic Annotation of Off-Target Sites`
+## Genomic Annotation of Off-Target Sites
 
 Annotates filtered off-target editing sites with genomic context including gene name, transcript feature (exon/intron/UTR/intergenic), distance to nearest gene, and known SNP overlap.
 
